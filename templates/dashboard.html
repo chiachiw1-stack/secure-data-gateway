@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Secure Data Gateway – InfoSec Dashboard</title>
+  <style>
+    /* 深色背景 */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1117;
+      color: #507090;
+      font-family: 'Courier New', monospace;
+      padding: 32px;
+    }
+
+    /* 標題 */
+    h1 { color: #58a6ff; font-size: 1.4rem; margin-bottom: 4px; }
+    .subtitle { color: #8b949e; font-size: 0.82rem; margin-bottom: 28px; }
+
+    /* 上方四個統計卡片 */
+    .dashboard { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+    .card {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 8px; padding: 18px 28px;
+      flex: 1; min-width: 130px; text-align: center;
+    }
+    .card .num   { font-size: 2.2rem; font-weight: bold; color: #58a6ff; }
+    .card .label { font-size: 0.75rem; color: #8b949e; margin-top: 6px; }
+    .card.red .num { color: #f85149; } /* PII 偵測數量用紅色 */
+
+    /* 威脅警示橫幅（偵測到 PII 才會出現） */
+    #threat-banner {
+      display: none; /* 預設隱藏 */
+      border: 1px solid #f85149; border-radius: 8px;
+      padding: 14px 20px; color: #f85149;
+      font-size: 0.9rem; margin-bottom: 24px;
+      animation: blink 0.8s infinite; /* 閃爍效果 */
+    }
+    @keyframes blink {
+      0%,100% { background: #1a0a0a; }
+      50%      { background: #2d1b1b; }
+    }
+
+    /* 小標題 */
+    .section-title {
+      color: #8b949e; font-size: 0.78rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* Live Traffic Visualizer：左右並排兩個表格 */
+    .visualizer { display: flex; gap: 24px; margin-bottom: 36px; }
+    .traffic-panel { flex: 1; }
+    .traffic-panel table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .traffic-panel th {
+      background: #161b22; color: #8b949e;
+      padding: 8px 12px; text-align: left;
+      border-bottom: 1px solid #30363d;
+    }
+    .traffic-panel td { padding: 8px 12px; border-bottom: 1px solid #21262d; }
+    .traffic-panel tr:hover { background: #161b22; }
+
+    /* 測試工具區塊 */
+    .test-section {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 8px; padding: 20px;
+    }
+    .inputs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .inputs input {
+      flex: 1; min-width: 140px;
+      background: #0d1117; border: 1px solid #30363d;
+      border-radius: 6px; color: #c9d1d9;
+      padding: 8px 12px; font-family: inherit; font-size: 0.82rem;
+    }
+    .inputs input:focus { outline: none; border-color: #58a6ff; }
+    .hint { font-size: 0.72rem; color: #8b949e; margin-bottom: 14px; }
+    .hint span { color: #f85149; }
+    .btn {
+      background: #238636; color: white; border: none;
+      border-radius: 6px; padding: 9px 24px;
+      cursor: pointer; font-family: inherit; font-size: 0.85rem;
+    }
+    .btn:hover { background: #2ea043; }
+    .empty { color: #444c56; font-size: 0.78rem; }
+  </style>
+</head>
+<body>
+
+  <!-- 標題區 -->
+  <h1> Secure Data Gateway — InfoSec Dashboard</h1>
+  <p class="subtitle">L.I.F.E. Pulse System ｜ Security & DevOps Monitor</p>
+
+  <!-- 威脅警示：偵測到 PII 才會出現並閃爍 -->
+  <div id="threat-banner">
+    🚨 THREAT DETECTED — PII leak attempt blocked by Gateway.
+    Phone number / National ID / Email intercepted.
+  </div>
+
+  <!-- 四個統計卡片 -->
+  <div class="dashboard">
+    <div class="card">
+      <div class="num" id="s-total">0</div>
+      <div class="label">Total Requests</div> <!-- 總共收到幾筆請求 -->
+    </div>
+    <div class="card">
+      <div class="num" id="s-clean">0</div>
+      <div class="label">Clean Requests</div> <!-- 安全的請求數 -->
+    </div>
+    <div class="card red">
+      <div class="num" id="s-threat">0</div>
+      <div class="label">PII Detected</div> <!-- 偵測到個資的次數 -->
+    </div>
+    <div class="card">
+      <div class="num" id="s-tokens">0</div>
+      <div class="label">Tokens Issued</div> <!-- 發出幾個匿名 token -->
+    </div>
+  </div>
+
+  <!-- Live Traffic Visualizer -->
+  <div class="section-title">📡 Live Traffic Visualizer</div>
+  <div class="visualizer">
+
+    <!-- 左邊：進來的 Dirty JSON（含真實身份） -->
+    <div class="traffic-panel">
+      <div class="section-title">Incoming — Dirty JSON</div>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Agent ID</th><th>Quiz ID</th><th>Score</th></tr>
+        </thead>
+        <tbody id="dirty-body">
+          <tr><td colspan="4" class="empty">No data yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 右邊：出去的 Clean JSON（只有匿名 token） -->
+    <div class="traffic-panel">
+      <div class="section-title">Outgoing — Clean JSON</div>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Token ID</th><th>Quiz ID</th><th>Score</th></tr>
+        </thead>
+        <tbody id="clean-body">
+          <tr><td colspan="4" class="empty">No data yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- 測試工具：模擬平板 App 送出資料 -->
+  <div class="test-section">
+    <div class="section-title" style="margin-bottom:14px;">🧪 Send Test Request</div>
+    <div class="inputs">
+      <input id="f-agent" type="text" placeholder="Agent ID" value="agent_lin_001">
+      <input id="f-quiz"  type="text" placeholder="Quiz ID"  value="compliance_quiz_01">
+      <input id="f-score" type="number" placeholder="Score"  value="72">
+    </div>
+    <p class="hint">
+      PII 測試：把 Agent ID 改成
+      <span>lin@fhc.com.tw</span>（Email）、
+      <span>0912345678</span>（手機）或
+      <span>A123456789</span>（身分證）看是否觸發警示。
+    </p>
+    <button class="btn" onclick="sendRequest()">▶ Submit</button>
+  </div>
+
+<script>
+  let count = 0; // 記錄總共送出幾筆
+
+  async function sendRequest() {
+    // 讀取表單的
