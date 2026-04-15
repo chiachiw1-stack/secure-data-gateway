@@ -6,167 +6,238 @@
   <style>
     /* 深色背景 */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: #0d1117;
-      color: #507090;
-      font-family: 'Courier New', monospace;
-      padding: 32px;
-    }
+    body { background: #0d1117; color: #58a6ff; font-family: 'Courier New', monospace; padding: 32px; }
 
     /* 標題 */
-    h1 { color: #58a6ff; font-size: 1.4rem; margin-bottom: 4px; }
+    h1 { color: #f7f9fb; font-size: 1.4rem; margin-bottom: 4px; }
     .subtitle { color: #8b949e; font-size: 0.82rem; margin-bottom: 28px; }
 
-    /* 上方四個統計卡片 */
+    /* 四個統計卡片 */
     .dashboard { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
-    .card {
-      background: #161b22; border: 1px solid #30363d;
-      border-radius: 8px; padding: 18px 28px;
-      flex: 1; min-width: 130px; text-align: center;
-    }
-    .card .num   { font-size: 2.2rem; font-weight: bold; color: #58a6ff; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 18px 28px; flex: 1; min-width: 130px; text-align: center; }
+    .card .num { font-size: 2.2rem; font-weight: bold; color: #58a6ff; }
     .card .label { font-size: 0.75rem; color: #8b949e; margin-top: 6px; }
-    .card.red .num { color: #f85149; } /* PII 偵測數量用紅色 */
+    .card.red .num { color: #f85149; }
 
-    /* 威脅警示橫幅（偵測到 PII 才會出現） */
-    #threat-banner {
-      display: none; /* 預設隱藏 */
-      border: 1px solid #f85149; border-radius: 8px;
-      padding: 14px 20px; color: #f85149;
-      font-size: 0.9rem; margin-bottom: 24px;
-      animation: blink 0.8s infinite; /* 閃爍效果 */
-    }
-    @keyframes blink {
-      0%,100% { background: #1a0a0a; }
-      50%      { background: #2d1b1b; }
-    }
+    /* 威脅警示 */
+    #threat-banner { display: none; border: 1px solid #f85149; border-radius: 8px; padding: 14px 20px; color: #f85149; font-size: 0.9rem; margin-bottom: 24px; animation: blink 0.8s infinite; }
+    @keyframes blink { 0%,100% { background: #1a0a0a; } 50% { background: #2d1b1b; } }
 
     /* 小標題 */
-    .section-title {
-      color: #8b949e; font-size: 0.78rem;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      margin-bottom: 12px;
-    }
+    .section-title { color: #8b949e; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
 
-    /* Live Traffic Visualizer：左右並排兩個表格 */
-    .visualizer { display: flex; gap: 24px; margin-bottom: 36px; }
+    /* Live Traffic visualiser */
+    .visualiser { display: flex; gap: 24px; margin-bottom: 36px; }
     .traffic-panel { flex: 1; }
-    .traffic-panel table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-    .traffic-panel th {
-      background: #161b22; color: #8b949e;
-      padding: 8px 12px; text-align: left;
-      border-bottom: 1px solid #30363d;
-    }
-    .traffic-panel td { padding: 8px 12px; border-bottom: 1px solid #21262d; }
-    .traffic-panel tr:hover { background: #161b22; }
 
-    /* 測試工具區塊 */
-    .test-section {
-      background: #161b22; border: 1px solid #30363d;
-      border-radius: 8px; padding: 20px;
-    }
+    /* 表格樣式 */
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 32px; }
+    th { background: #161b22; color: #8b949e; padding: 6px 10px; text-align: left; border-bottom: 1px solid #30363d; white-space: nowrap; }
+    td { padding: 8px 12px; border-bottom: 1px solid #21262d; }
+    tr:hover { background: #161b22; }
+    .token-cell { color: #58a6ff; font-size: 0.7rem; }
+    .empty { color: #444c56; font-size: 0.78rem; }
+
+    /* 資料庫標題 */
+    .db-title { font-size: 0.85rem; color: #58a6ff; margin: 28px 0 12px 0; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+    .db-desc { font-size: 0.72rem; color: #8b949e; margin-bottom: 12px; }
+
+    /* 測試section */
     .inputs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-    .inputs input {
-      flex: 1; min-width: 140px;
-      background: #0d1117; border: 1px solid #30363d;
-      border-radius: 6px; color: #c9d1d9;
-      padding: 8px 12px; font-family: inherit; font-size: 0.82rem;
-    }
+    .inputs input { flex: 1; min-width: 140px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; padding: 8px 12px; font-family: inherit; font-size: 0.82rem; }
     .inputs input:focus { outline: none; border-color: #58a6ff; }
     .hint { font-size: 0.72rem; color: #8b949e; margin-bottom: 14px; }
     .hint span { color: #f85149; }
-    .btn {
-      background: #238636; color: white; border: none;
-      border-radius: 6px; padding: 9px 24px;
-      cursor: pointer; font-family: inherit; font-size: 0.85rem;
-    }
+    .btn { background: #238636; color: white; border: none; border-radius: 6px; padding: 6px 16px; cursor: pointer; font-family: inherit; font-size: 0.85rem; }
     .btn:hover { background: #2ea043; }
-    .empty { color: #444c56; font-size: 0.78rem; }
+    
   </style>
 </head>
 <body>
 
   <!-- 標題區 -->
-  <h1> Secure Data Gateway — InfoSec Dashboard</h1>
-  <p class="subtitle">L.I.F.E. Pulse System ｜ Security & DevOps Monitor</p>
+  <h1> InfoSec Dashboard</h1>
 
-  <!-- 威脅警示：偵測到 PII 才會出現並閃爍 -->
+  <!-- 警示橫幅 -->
   <div id="threat-banner">
-    🚨 THREAT DETECTED — PII leak attempt blocked by Gateway.
-    Phone number / National ID / Email intercepted.
+    🚨 THREAT DETECTED — PII may bypass!
   </div>
 
-  <!-- 四個統計卡片 -->
+  <!-- Dashboard -->
   <div class="dashboard">
-    <div class="card">
-      <div class="num" id="s-total">0</div>
-      <div class="label">Total Requests</div> <!-- 總共收到幾筆請求 -->
-    </div>
-    <div class="card">
-      <div class="num" id="s-clean">0</div>
-      <div class="label">Clean Requests</div> <!-- 安全的請求數 -->
-    </div>
-    <div class="card red">
-      <div class="num" id="s-threat">0</div>
-      <div class="label">PII Detected</div> <!-- 偵測到個資的次數 -->
-    </div>
-    <div class="card">
-      <div class="num" id="s-tokens">0</div>
-      <div class="label">Tokens Issued</div> <!-- 發出幾個匿名 token -->
-    </div>
+    <div class="card"><div class="num" id="s-total">0</div><div class="label">Total Requests</div></div>
+    <div class="card"><div class="num" id="s-clean">0</div><div class="label">Clean Requests</div></div>
+    <div class="card red"><div class="num" id="s-threat">0</div><div class="label">PII Detected</div></div>
   </div>
 
-  <!-- Live Traffic Visualizer -->
-  <div class="section-title">📡 Live Traffic Visualizer</div>
-  <div class="visualizer">
+<!-- Live Traffic Visualiser -->
+  <h1 style="color:#fbfcfc; font-size:1.4rem; margin-bottom:12px;"> Live Traffic Visualiser</h1>
+  <div class="visualiser">
 
-    <!-- 左邊：進來的 Dirty JSON（含真實身份） -->
-    <div class="traffic-panel">
-      <div class="section-title">Incoming — Dirty JSON</div>
-      <table>
-        <thead>
-          <tr><th>#</th><th>Agent ID</th><th>Quiz ID</th><th>Score</th></tr>
-        </thead>
-        <tbody id="dirty-body">
-          <tr><td colspan="4" class="empty">No data yet.</td></tr>
-        </tbody>
-      </table>
-    </div>
+<!-- 左邊：Dirty JSON -->
+<div class="traffic-panel">
+  <div class="section-title">Dirty JSON</div>
+  <div id="dirty-body"></div>
+</div>
 
-    <!-- 右邊：出去的 Clean JSON（只有匿名 token） -->
-    <div class="traffic-panel">
-      <div class="section-title">Outgoing — Clean JSON</div>
-      <table>
-        <thead>
-          <tr><th>#</th><th>Token ID</th><th>Quiz ID</th><th>Score</th></tr>
-        </thead>
-        <tbody id="clean-body">
-          <tr><td colspan="4" class="empty">No data yet.</td></tr>
-        </tbody>
-      </table>
-    </div>
+<!-- 右邊：Clean JSON -->
+<div class="traffic-panel">
+  <div class="section-title">Clean JSON</div>
+  <div id="clean-body"></div>
+</div>
 
   </div>
 
-  <!-- 測試工具：模擬平板 App 送出資料 -->
+  <!-- 測試 -->
   <div class="test-section">
-    <div class="section-title" style="margin-bottom:14px;">🧪 Send Test Request</div>
+    <div class="section-title" style="margin-bottom:14px;"> Send Test Request</div>
     <div class="inputs">
-      <input id="f-agent" type="text" placeholder="Agent ID" value="agent_lin_001">
-      <input id="f-quiz"  type="text" placeholder="Quiz ID"  value="compliance_quiz_01">
-      <input id="f-score" type="number" placeholder="Score"  value="72">
+      <input id="f-agent" type="text" placeholder="Agent ID" value="001">
+      <input id="f-name" type="text" placeholder="Agent Name（真實姓名）" value="王小明">
+      <input id="f-module" type="text" placeholder="module ID" value="OB">
+      <input id="f-accuracy" type="number" placeholder="accuracy" value="72">
+      <input id="f-speed" type="number" placeholder="Interaction Speed (秒)" value="340">
+      <input id="f-pii" type="text" placeholder="Personal Information" value="">
     </div>
-    <p class="hint">
-      PII 測試：把 Agent ID 改成
-      <span>lin@fhc.com.tw</span>（Email）、
-      <span>0912345678</span>（手機）或
-      <span>A123456789</span>（身分證）看是否觸發警示。
-    </p>
+    </div>
+    <p class="hint">PII 測試：個資 <span>ｗang@gmail.com</span>（Email）、<span>0912345678</span>（手機）或 <span>A123456789</span>（身分證）。</p>
     <button class="btn" onclick="sendRequest()">▶ Submit</button>
   </div>
 
-<script>
-  let count = 0; // 記錄總共送出幾筆
+  <!--IdentityVault -->
+  <div class="db-title">🔴 IdentityVault</div>
+  <table>
+    <thead id="vault-head"></thead>
+    <tbody id="vault-body"></tbody>
+  </table>
 
-  async function sendRequest() {
-    // 讀取表單的
+  <!--ApiTrafficLogs：Gateway-->
+  <div class="db-title">🟡 ApiTrafficLogs</div>
+  <table>
+  <thead id="log-head"></thead>
+  <tbody id="log-body"></tbody>
+  </table>
+
+  <!-- TelemetryLogs-->
+  <div class="db-title">🟢 TelemetryLogs</div>
+  <table>
+    <thead id="tele-head"></thead>
+    <tbody id="tele-body"></tbody>
+  </table>
+
+  <!-- JavaScript -->
+  <script>
+    let count = 0; // 記錄手動送出的筆數
+    const dirtyBody = document.getElementById('dirty-body');
+    const cleanBody = document.getElementById('clean-body');
+
+    // ── 手動送出測試請求 ──────────────────────────────────────────
+    async function sendRequest() {
+      // 讀取表單的值
+      const agentId  = document.getElementById('f-agent').value;
+      const agentName = document.getElementById('f-name').value;
+      const moduleId = document.getElementById('f-module').value;
+      const accuracy = parseInt(document.getElementById('f-accuracy').value);
+      const speed    = parseInt(document.getElementById('f-speed').value);
+      const pii      = document.getElementById('f-pii').value;
+
+      // POST 到 Flask Gateway API
+      const res = await fetch('/api/v1/submit_sprint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          agent_id: agentId, 
+          agent_name: agentName, 
+          module_id: moduleId, 
+          accuracy: accuracy, 
+          interaction_speed: speed,
+          personal_information: pii
+        }),
+      });
+      const data = await res.json();
+      count++;
+
+      // 更新威脅警示橫幅
+      document.getElementById('threat-banner').style.display = data.pii_detected ? 'block' : 'none';
+      
+      // 顯示 Dirty JSON（原始資料，含個資）
+      const dirtyBlock = document.createElement('pre');
+      dirtyBlock.className = 'json-block dirty';
+      dirtyBlock.textContent = JSON.stringify({ agent_id: agentId, agent_name: agentName, module_id: moduleId, accuracy: accuracy, interaction_speed: speed, personal_information: pii }, null, 2);
+      dirtyBody.innerHTML = '';
+      dirtyBody.appendChild(dirtyBlock);
+
+      // 顯示 Clean JSON（匿名資料，個資已被 token 取代）
+      const cleanBlock = document.createElement('pre');
+      cleanBlock.className = 'json-block clean';
+      cleanBlock.textContent = JSON.stringify({ token_id: data.token_id, module_id: moduleId, accuracy: accuracy, interaction_speed: speed, personal_information: pii }, null, 2);
+      cleanBody.innerHTML = '';
+      cleanBody.appendChild(cleanBlock);
+
+      // 重新載入三個資料庫表格和統計卡片
+      loadTables();
+    }
+
+    // ── 載入資料庫資料並更新 Dashboard ───────────────────────────
+    async function loadTables() {
+      // 自動從 API 回傳的 key 產生表頭，不用手刻
+      function renderTable(tbodyId, rows, theadId) {
+        if (rows.length === 0) return;
+        const keys = Object.keys(rows[0]);
+        document.getElementById(theadId).innerHTML =
+          '<tr>' + keys.map(k => `<th>${k}</th>`).join('') + '</tr>';
+        document.getElementById(tbodyId).innerHTML = rows.map(r =>
+          '<tr>' + keys.map(k => `<td>${r[k]}</td>`).join('') + '</tr>'
+        ).join('');
+      }
+
+      // 從三個資料庫撈資料
+      const logs  = await fetch('/api/logs').then(r => r.json());
+      const tele  = await fetch('/api/telemetry').then(r => r.json());
+      const vault = await fetch('/api/vault').then(r => r.json());
+
+      // 渲染三個表格
+      renderTable('log-body',   logs,  'log-head');
+      renderTable('tele-body',  tele,  'tele-head');
+      renderTable('vault-body', vault, 'vault-head');
+
+      // 更新統計卡片
+      const threats = logs.filter(r => r.pii_detected_flag).length;
+      document.getElementById('s-total').textContent  = logs.length;
+      document.getElementById('s-threat').textContent = threats;
+      document.getElementById('s-clean').textContent  = logs.length - threats;
+    }
+
+    // 頁面載入時先撈一次資料
+    loadTables();
+
+    // ── 每 3 秒自動更新（支援 test.py 自動送資料）────────────────
+    setInterval(async () => {
+      // 更新資料庫表格和統計卡片
+      loadTables();
+
+      // 撈最新一筆請求，更新 Live Traffic Visualiser
+      const recent = await fetch('/api/recent').then(r => r.json());
+      if (Object.keys(recent).length > 0) {
+        // 顯示最新 Dirty JSON
+        dirtyBody.innerHTML = '';
+        const dirtyBlock = document.createElement('pre');
+        dirtyBlock.className = 'json-block dirty';
+        dirtyBlock.textContent = JSON.stringify(recent.dirty, null, 2);
+        dirtyBody.appendChild(dirtyBlock);
+
+        // 顯示最新 Clean JSON
+        cleanBody.innerHTML = '';
+        const cleanBlock = document.createElement('pre');
+        cleanBlock.className = 'json-block clean';
+        cleanBlock.textContent = JSON.stringify(recent.clean, null, 2);
+        cleanBody.appendChild(cleanBlock);
+
+        // 更新威脅警示橫幅
+        document.getElementById('threat-banner').style.display = recent.pii_detected ? 'block' : 'none';
+      }
+    }, 3000);
+</script>
+
+</body>
+</html>
