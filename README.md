@@ -73,7 +73,6 @@ secure_data_gateway/
 | Clean Requests | 沒有 PII 的乾淨請求數量 |
 | PII Detected | 偵測到含有個資的請求數量 |
 | Threat Rate | PII 佔總請求的比例（%）|
-| Avg Processing Time | Gateway 平均處理耗時（ms）|
 
 
 

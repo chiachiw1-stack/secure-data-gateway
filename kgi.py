@@ -291,9 +291,6 @@ def get_summary():
     total_requests = len(logs)
     threat_count = sum(1 for r in logs if r["pii_detected_flag"] == 1)
     clean_count = total_requests - threat_count
-    avg_processing = round(
-        sum(r["processing_time_ms"] for r in logs) / total_requests, 2
-    ) if total_requests > 0 else 0
 
     threat_rate = round((threat_count / total_requests) * 100, 2) if total_requests > 0 else 0
 
@@ -302,7 +299,6 @@ def get_summary():
         "clean_requests": clean_count,
         "threat_count": threat_count,
         "threat_rate": threat_rate,
-        "avg_processing_time_ms": avg_processing,
     })
 
 # =========================
