@@ -295,14 +295,6 @@ def get_summary():
         sum(r["processing_time_ms"] for r in logs) / total_requests, 2
     ) if total_requests > 0 else 0
 
-    avg_accuracy = round(
-        sum((r["accuracy"] or 0) for r in tele_rows) / len(tele_rows), 2
-    ) if len(tele_rows) > 0 else 0
-
-    avg_speed = round(
-        sum((r["interaction_speed"] or 0) for r in tele_rows) / len(tele_rows), 2
-    ) if len(tele_rows) > 0 else 0
-
     threat_rate = round((threat_count / total_requests) * 100, 2) if total_requests > 0 else 0
 
     return jsonify({
@@ -311,9 +303,6 @@ def get_summary():
         "threat_count": threat_count,
         "threat_rate": threat_rate,
         "avg_processing_time_ms": avg_processing,
-        "avg_accuracy": avg_accuracy,
-        "avg_interaction_speed": avg_speed,
-        "unique_tokens": len(vault_rows)
     })
 
 # =========================
