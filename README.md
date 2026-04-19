@@ -3,16 +3,18 @@
 一個隱私保護中間層（Gateway），所有學習行為數據在進入分析資料庫之前，必須先通過 Gateway 進行 PII 偵測與 Tokenization。真實員工身份會被替換成匿名 UUID token，確保分析師永遠看不到真實個資，同時仍能進行完整的數據分析。
 
 ## 系統架構
+```
 原始資料（含個資）
         ↓
    [ Gateway ]
    PII (員工個人資料偵測) + Tokenization (Agent ID & Name 匿名化)
         ↓                                ← 分流至三個資料庫
-┌─────────────────────────────────────┐
+┌──────────────────────────────────────┐
 │ 🔴 IdentityVault (identity_vault.db) │  ← 真實身份 ↔ Token 對應，嚴格限制
 │ 🟡 ApiTrafficLogs (API.db)           │  ← API 流量
 │ 🟢 TelemetryLogs (telemetry.db)      │  ← 匿名行為數據，分析師可存取
-└─────────────────────────────────────┘
+└──────────────────────────────────────┘
+```
 
 ## 資料庫設計 (SQLite)
 
@@ -46,8 +48,8 @@
 | personal_information | 自由文字欄位（PII 偵測目標）|
 | timestamp | 時間戳記 |
 
-## Dashboard 功能說明
-頁面頂部顯示三個即時統計數字：
+### Dashboard 功能說明
+顯示三個即時統計數字提供後台人員管理
 - **Total Requests** — 總共收到幾筆資料流入
 - **Clean Requests** — 沒有 PII 的乾淨請求數量
 - **PII Detected** — 偵測到含有個資的資料數量
