@@ -83,7 +83,7 @@ secure_data_gateway/
 - **右側 Clean JSON** — 經過 Gateway 處理後的匿名資料，真實身份已被 UUID token 取代
 
 ## Threat Alert
-當 `personal_information` 欄位偵測到 PII（Email、手機、身分證），頁面頂部會出現紅色閃爍警示橫幅
+當 `notes` 欄位偵測到 PII（Email、手機、身分證），頁面頂部會出現紅色閃爍警示橫幅
 這模擬真實系統中的安全警報機制，提醒管理員有個資試圖進入分析資料庫
 
 ## PII 偵測範圍
