@@ -67,12 +67,14 @@ secure_data_gateway/
 ## Dashboard 資安儀表板
 
 提供資安與 DevOps 團隊的高階監控畫面
+| Metric | 說明 |
 |------|------|
 | Total Requests | 總共收到幾筆請求 |
 | Clean Requests | 沒有 PII 的乾淨請求數量 |
 | PII Detected | 偵測到含有個資的請求數量 |
 | Threat Rate | PII 佔總請求的比例（%）|
 | Avg Processing Time | Gateway 平均處理耗時（ms）|
+
 
 
 ## Live Traffic Visualiser 即時流量視覺化
