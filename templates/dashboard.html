@@ -12,7 +12,7 @@
     h1 { color: #f7f9fb; font-size: 1.4rem; margin-bottom: 4px; }
     .subtitle { color: #8b949e; font-size: 0.82rem; margin-bottom: 28px; }
 
-    /* 四個統計卡片 */
+    /* 四個統計dashboard */
     .dashboard { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
     .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 18px 28px; flex: 1; min-width: 130px; text-align: center; }
     .card .num { font-size: 2.2rem; font-weight: bold; color: #58a6ff; }
@@ -42,15 +42,6 @@
     .db-title { font-size: 0.85rem; color: #58a6ff; margin: 28px 0 12px 0; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
     .db-desc { font-size: 0.72rem; color: #8b949e; margin-bottom: 12px; }
 
-    /* 測試section */
-    .inputs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-    .inputs input { flex: 1; min-width: 140px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; padding: 8px 12px; font-family: inherit; font-size: 0.82rem; }
-    .inputs input:focus { outline: none; border-color: #58a6ff; }
-    .hint { font-size: 0.72rem; color: #8b949e; margin-bottom: 14px; }
-    .hint span { color: #f85149; }
-    .btn { background: #238636; color: white; border: none; border-radius: 6px; padding: 6px 16px; cursor: pointer; font-family: inherit; font-size: 0.85rem; }
-    .btn:hover { background: #2ea043; }
-    
   </style>
 </head>
 <body>
@@ -88,22 +79,6 @@
 
   </div>
 
-  <!-- 測試 -->
-  <div class="test-section">
-    <div class="section-title" style="margin-bottom:14px;"> Send Test Request</div>
-    <div class="inputs">
-      <input id="f-agent" type="text" placeholder="Agent ID" value="001">
-      <input id="f-name" type="text" placeholder="Agent Name（真實姓名）" value="王小明">
-      <input id="f-module" type="text" placeholder="module ID" value="OB">
-      <input id="f-accuracy" type="number" placeholder="accuracy" value="72">
-      <input id="f-speed" type="number" placeholder="Interaction Speed (秒)" value="340">
-      <input id="f-pii" type="text" placeholder="Personal Information" value="">
-    </div>
-    </div>
-    <p class="hint">PII 測試：個資 <span>ｗang@gmail.com</span>（Email）、<span>0912345678</span>（手機）或 <span>A123456789</span>（身分證）。</p>
-    <button class="btn" onclick="sendRequest()">▶ Submit</button>
-  </div>
-
   <!--IdentityVault -->
   <div class="db-title">🔴 IdentityVault</div>
   <table>
@@ -130,53 +105,6 @@
     let count = 0; // 記錄手動送出的筆數
     const dirtyBody = document.getElementById('dirty-body');
     const cleanBody = document.getElementById('clean-body');
-
-    // ── 手動送出測試請求 ──────────────────────────────────────────
-    async function sendRequest() {
-      // 讀取表單的值
-      const agentId  = document.getElementById('f-agent').value;
-      const agentName = document.getElementById('f-name').value;
-      const moduleId = document.getElementById('f-module').value;
-      const accuracy = parseInt(document.getElementById('f-accuracy').value);
-      const speed    = parseInt(document.getElementById('f-speed').value);
-      const pii      = document.getElementById('f-pii').value;
-
-      // POST 到 Flask Gateway API
-      const res = await fetch('/api/v1/submit_sprint', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          agent_id: agentId, 
-          agent_name: agentName, 
-          module_id: moduleId, 
-          accuracy: accuracy, 
-          interaction_speed: speed,
-          personal_information: pii
-        }),
-      });
-      const data = await res.json();
-      count++;
-
-      // 更新威脅警示橫幅
-      document.getElementById('threat-banner').style.display = data.pii_detected ? 'block' : 'none';
-      
-      // 顯示 Dirty JSON（原始資料，含個資）
-      const dirtyBlock = document.createElement('pre');
-      dirtyBlock.className = 'json-block dirty';
-      dirtyBlock.textContent = JSON.stringify({ agent_id: agentId, agent_name: agentName, module_id: moduleId, accuracy: accuracy, interaction_speed: speed, personal_information: pii }, null, 2);
-      dirtyBody.innerHTML = '';
-      dirtyBody.appendChild(dirtyBlock);
-
-      // 顯示 Clean JSON（匿名資料，個資已被 token 取代）
-      const cleanBlock = document.createElement('pre');
-      cleanBlock.className = 'json-block clean';
-      cleanBlock.textContent = JSON.stringify({ token_id: data.token_id, module_id: moduleId, accuracy: accuracy, interaction_speed: speed, personal_information: pii }, null, 2);
-      cleanBody.innerHTML = '';
-      cleanBody.appendChild(cleanBlock);
-
-      // 重新載入三個資料庫表格和統計卡片
-      loadTables();
-    }
 
     // ── 載入資料庫資料並更新 Dashboard ───────────────────────────
     async function loadTables() {

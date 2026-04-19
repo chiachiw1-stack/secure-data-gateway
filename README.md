@@ -17,6 +17,18 @@
 │ 🟢 TelemetryLogs (telemetry.db)      │  ← 匿名行為數據，分析師可存取
 └──────────────────────────────────────┘
 ```
+## 資料結構
+
+secure_data_gateway/
+├── kgi.py # Flask 後端（Gateway + API）
+├── test.py # 模擬前端送資料 測試
+├── templates/
+│ └── dashboard.html # UI（資安監控 + JSON 視覺化）
+├── telemetry.db # 分析資料庫（匿名資料）
+├── identity_vault.db # 身份對照庫（高度限制存取）
+├── API.db # Gateway 稽核紀錄（Audit Logs）
+├── requirements.txt # Python 套件
+└── README.md
 
 ## 資料庫設計 (SQLite)
 
