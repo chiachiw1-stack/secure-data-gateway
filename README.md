@@ -18,17 +18,19 @@
 └──────────────────────────────────────┘
 ```
 ## 資料結構
-
+```
 secure_data_gateway/
-├── kgi.py # Flask 後端（Gateway + API）
-├── test.py # 模擬前端送資料 測試
+├── kgi.py                   # Flask Backend（Gateway API）
 ├── templates/
-│ └── dashboard.html # UI（資安監控 + JSON 視覺化）
-├── telemetry.db # 分析資料庫（匿名資料）
-├── identity_vault.db # 身份對照庫（高度限制存取）
-├── API.db # Gateway 稽核紀錄（Audit Logs）
-├── requirements.txt # Python 套件
+│   └── dashboard.html       # InfoSec Dashboard UI
+├── test.py                  # 模擬前端自動送資料
+├── identity_vault.db        # 身份對照庫（高度限制存取）— 自動產生
+├── API.db                   # API 稽核資料庫— 自動產生
+├── telemetry.db             # 匿名分析資料庫（分析師可存取）— 自動產生
+├── .gitignore               # 排除 .db 檔案，避免個資上傳 GitHub
+├── requirements.txt
 └── README.md
+```
 
 ## 資料庫設計 (SQLite)
 
@@ -59,7 +61,7 @@ secure_data_gateway/
 | module_id | 模組代號 |
 | accuracy | 準確率 |
 | interaction_speed | 互動速度 |
-| personal_information | 自由文字欄位（PII 偵測目標）|
+| notes | 自由文字欄位（PII 偵測目標）|
 | timestamp | 時間戳記 |
 
 ## Dashboard 資安儀表板
