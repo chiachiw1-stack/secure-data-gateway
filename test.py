@@ -20,10 +20,10 @@ while True:
     data = {
         "agent_id": agent["agent_id"],
         "agent_name": agent["agent_name"],
-        "module_id": random.choice(["OB", "CS", "HR"]),
+        "module_id": random.randint(1,10),
         "accuracy": random.randint(60, 100),
         "interaction_speed": random.randint(200, 500),
-        "personal_information": random.choice(pii_samples),
+        "notes": random.choice(pii_samples),
     }
     res = requests.post(url, json=data)
     print(res.json())
