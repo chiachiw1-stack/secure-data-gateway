@@ -1,6 +1,8 @@
 # Project Security Gateway
-本專案為員工學習平台系列的第 10 個 Mini Project。
-一個隱私保護中間層（Gateway），所有學習行為數據在進入分析資料庫之前，必須先通過 Gateway 進行 PII 偵測與 Tokenization。真實員工身份會被替換成匿名 UUID token，確保分析師永遠看不到真實個資，同時仍能進行完整的數據分析。
+本專案為員工學習平台 L.I.F.E. Pulse 的第 10 個 Mini Project。
+建立一個隱私保護中間閘道（Gateway）在前端應用在前端應用與主資料庫中間。
+所有員工學習行為數據在進入分析資料庫之前，必須先通過 Gateway 進行 PII 偵測與 Tokenization 並分流到三個資料庫。
+核心：進行資料攔截與匿名化處理，透過 tokenization 將身份與行為資料分離，並分別存入不同資料庫，以符合最小權限原則與個資法規要求
 
 ## 系統架構
 ```
@@ -10,7 +12,7 @@
    PII (員工個人資料偵測) + Tokenization (Agent ID & Name 匿名化)
         ↓                                ← 分流至三個資料庫
 ┌──────────────────────────────────────┐
-│ 🔴 IdentityVault (identity_vault.db) │  ← 真實身份 ↔ Token 對應，嚴格限制
+│ 🔴 IdentityVault (identity_vault.db) │  ← 身份對應資料，嚴格限制
 │ 🟡 ApiTrafficLogs (API.db)           │  ← API 流量
 │ 🟢 TelemetryLogs (telemetry.db)      │  ← 匿名行為數據，分析師可存取
 └──────────────────────────────────────┘
@@ -48,13 +50,13 @@
 | personal_information | 自由文字欄位（PII 偵測目標）|
 | timestamp | 時間戳記 |
 
-### Dashboard 功能說明
-顯示三個即時統計數字提供後台人員管理
+### Dashboard 資安儀表板
+顯示三個即時統計，提供資安與 DevOps 團隊的高階監控畫面
 - **Total Requests** — 總共收到幾筆資料流入
 - **Clean Requests** — 沒有 PII 的乾淨請求數量
 - **PII Detected** — 偵測到含有個資的資料數量
 
-### Live Traffic Visualiser
+### Live Traffic Visualiser 即時流量視覺化
 每次有新資料進來，畫面會即時更新顯示：
 - **左側 Dirty JSON** — 原始資料，包含真實姓名、員工 ID、分數 etc
 - **右側 Clean JSON** — 經過 Gateway 處理後的匿名資料，真實身份已被 UUID token 取代
