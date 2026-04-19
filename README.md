@@ -50,18 +50,20 @@
 | personal_information | 自由文字欄位（PII 偵測目標）|
 | timestamp | 時間戳記 |
 
-### Dashboard 資安儀表板
+## Dashboard 資安儀表板
+
 顯示三個即時統計，提供資安與 DevOps 團隊的高階監控畫面
 - **Total Requests** — 總共收到幾筆資料流入
 - **Clean Requests** — 沒有 PII 的乾淨請求數量
 - **PII Detected** — 偵測到含有個資的資料數量
 
-### Live Traffic Visualiser 即時流量視覺化
+## Live Traffic Visualiser 即時流量視覺化
+
 每次有新資料進來，畫面會即時更新顯示：
 - **左側 Dirty JSON** — 原始資料，包含真實姓名、員工 ID、分數 etc
 - **右側 Clean JSON** — 經過 Gateway 處理後的匿名資料，真實身份已被 UUID token 取代
 
-### Threat Alert
+## Threat Alert
 當 `personal_information` 欄位偵測到 PII（Email、手機、身分證），頁面頂部會出現紅色閃爍警示橫幅
 這模擬真實系統中的安全警報機制，提醒管理員有個資試圖進入分析資料庫
 
