@@ -237,7 +237,7 @@
 
     <!-- 若最近一筆資料含有 PII，顯示警示 -->
     <div id="threat-banner">
-      THREAT DETECTED — PII may bypass the analytics databse.
+      THREAT DETECTED — PII attempting to bypass the analytics databse.
     </div>
 
     <!-- =========================
@@ -259,16 +259,16 @@
         <div class="label">PII Detected</div>
       </div>
 
-      <div class="card">
+      <div class="card red">
         <div class="num" id="s-rate">0%</div>
         <div class="label">Threat Rate</div>
       </div>
-      </div>
     </div>
+
     <!-- =========================
          Live Traffic Visualiser
     ========================== -->
-      <h2 class="section-title-main">Live Traffic Visualiser</h2>      
+      <h1 class="page-title">Live Traffic Visualiser</h1>
       <div class="visualiser-box">
       <div class="visualiser">
         <div class="traffic-panel">
@@ -286,7 +286,7 @@
     <!-- =========================
          Recent Threat Events
     ========================== -->
-    <h2 class="section-title-main">Recent Threat Events</h2>
+    <h1 class="page-title">Recent Threat Events</h1>
     <div class="panel">
       <div class="table-wrap">
         <table>
@@ -300,41 +300,6 @@
     </div>
     </div>
 
-    <!-- =========================
-         資料表 
-    ========================== -->
-    <div class="table-section">
-      <div class="db-title">IdentityVault</div>
-      <div class="table-wrap">
-        <table>
-          <thead id="vault-head"></thead>
-          <tbody id="vault-body"></tbody>
-        </table>
-      </div>
-      <div id="vault-empty" class="empty-state" style="display:none;">No data available.</div>
-    </div>
-
-    <div class="table-section">
-      <div class="db-title">ApiTrafficLogs</div>
-      <div class="table-wrap">
-        <table>
-          <thead id="log-head"></thead>
-          <tbody id="log-body"></tbody>
-        </table>
-      </div>
-      <div id="log-empty" class="empty-state" style="display:none;">No data available.</div>
-    </div>
-
-    <div class="table-section">
-      <div class="db-title">TelemetryLogs</div>
-      <div class="table-wrap">
-        <table>
-          <thead id="tele-head"></thead>
-          <tbody id="tele-body"></tbody>
-        </table>
-      </div>
-      <div id="tele-empty" class="empty-state" style="display:none;">No data available.</div>
-    </div>
 
   </div>
 
@@ -384,11 +349,6 @@
       document.getElementById("s-clean").textContent = summary.clean_requests;
       document.getElementById("s-threat").textContent = summary.threat_count;
       document.getElementById("s-rate").textContent = summary.threat_rate + "%";
-
-      document.getElementById("avg-processing").textContent = summary.avg_processing_time_ms + " ms";
-      document.getElementById("unique-tokens").textContent = summary.unique_tokens;
-      document.getElementById("avg-accuracy").textContent = summary.avg_accuracy;
-      document.getElementById("avg-speed").textContent = summary.avg_interaction_speed;
     }
 
     // =========================
@@ -418,20 +378,6 @@
     }
 
     // =========================
-    // 載入三個資料表
-    // 保留你原本的 DB 顯示
-    // =========================
-    async function loadTables() {
-      const logs = await fetch("/api/logs").then(r => r.json());
-      const tele = await fetch("/api/telemetry").then(r => r.json());
-      const vault = await fetch("/api/vault").then(r => r.json());
-
-      renderTable("log-body", logs, "log-head", "log-empty");
-      renderTable("tele-body", tele, "tele-head", "tele-empty");
-      renderTable("vault-body", vault, "vault-head", "vault-empty");
-    }
-
-    // =========================
     // 一次刷新整個 dashboard
     // =========================
     async function refreshAll() {
@@ -439,7 +385,6 @@
         await loadSummary();
         await loadRecent();
         await loadThreats();
-        await loadTables();
       } catch (error) {
         console.error("Dashboard refresh failed:", error);
       }
